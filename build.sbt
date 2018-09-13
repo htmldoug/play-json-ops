@@ -44,7 +44,7 @@ def commonProject(id: String): Project = {
   ).enablePlugins(SemVerPlugin)
 }
 
-def playJsonOps(includePlayVersion: String): Project = {
+def playJsonOpsCommon(includePlayVersion: String): Project = {
   val playSuffix = includePlayVersion match {
     case Dependencies.play23Version => "23"
     case Dependencies.play25Version => "25"
@@ -53,8 +53,12 @@ def playJsonOps(includePlayVersion: String): Project = {
     case Dependencies.play23Version => Dependencies.scalatest2Version
     case Dependencies.play25Version => Dependencies.scalatest3Version
   }
-  val id = s"play$playSuffix-json-ops"
+  val id = s"play$playSuffix-json-ops-common"
+  val projectPath = "play-json-ops-common"
   commonProject(id).settings(
+    sourceDirectory := file(s"$projectPath/src").getAbsoluteFile,
+    (sourceDirectory in Compile) := file(s"$projectPath/src/main").getAbsoluteFile,
+    (sourceDirectory in Test) := file(s"$projectPath/src/test").getAbsoluteFile,
     libraryDependencies ++= Seq(
       Dependencies.playJson(includePlayVersion)
     ) ++ Seq(
@@ -62,6 +66,21 @@ def playJsonOps(includePlayVersion: String): Project = {
       Dependencies.scalatest(scalatestVersion)
     ).map(_ % Test)
   )
+}
+
+lazy val `play23-json-ops-common` = playJsonOpsCommon(Dependencies.play23Version)
+lazy val `play25-json-ops-common` = playJsonOpsCommon(Dependencies.play25Version)
+
+def playJsonOps(includePlayVersion: String): Project = {
+  val playSuffix = includePlayVersion match {
+    case Dependencies.play23Version => "23"
+    case Dependencies.play25Version => "25"
+  }
+  val id = s"play$playSuffix-json-ops"
+  commonProject(id).dependsOn(includePlayVersion match {
+    case Dependencies.play23Version => `play23-json-ops-common`
+    case Dependencies.play25Version => `play25-json-ops-common`
+  })
 }
 
 lazy val `play23-json-ops` = playJsonOps(Dependencies.play23Version)
@@ -77,7 +96,7 @@ def playJsonTests(includePlayVersion: String, includeScalatestVersion: String): 
     case Dependencies.scalatest3Version => ""
   }
   val id = s"play$playSuffix-json-tests$scalacheckSuffix"
-  val projectPath = s"play$playSuffix-json-tests"
+  val projectPath = "play-json-tests-common"
   commonProject(id).settings(
     // set the source code directories to the shared project root
     sourceDirectory := file(s"$projectPath/src").getAbsoluteFile,

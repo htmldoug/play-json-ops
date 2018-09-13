@@ -1,3 +1,3 @@
 package play.api.libs.json
 
-package object ops extends JsonImplicits
+package object ops extends JsonImplicits with JsonMacroImplicits
