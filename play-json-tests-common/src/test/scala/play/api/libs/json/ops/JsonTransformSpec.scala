@@ -6,6 +6,7 @@ import play.api.libs.json._
 import play.api.libs.json.scalacheck.JsValueGenerators
 
 import scala.annotation.tailrec
+import scala.collection.immutable.Seq // needed for Scala 2.13 support
 import scala.util.Random
 
 class JsonTransformSpec extends FlatSpec
@@ -34,7 +35,7 @@ with JsonImplicits {
 
   "redactPaths" should "redact selected fields by path at the top level" in {
     forAll { obj: JsObject =>
-      val topLevelPaths: Seq[JsPath] = obj.fields.map(__ \ _._1)
+      val topLevelPaths: Seq[JsPath] = Seq(obj.fields.toArray: _*).map(__ \ _._1) // required for Scala 2.13 support
       whenever(topLevelPaths.nonEmpty) {
         val redactedPaths: Seq[JsPath] = Random.shuffle(topLevelPaths) take Random.nextInt(topLevelPaths.size)
         implicit val redactor: JsonTransform[Any] = JsonTransform.redactPaths[Any](redactedPaths)

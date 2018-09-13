@@ -4,9 +4,7 @@ import play.api.libs.json._
 
 import scala.language.implicitConversions
 
-private[ops] trait JsonImplicits extends ImplicitTupleFormats {
-
-  implicit def jsValueOps(json: JsValue): JsValueOps = new JsValueOps(json)
+private[ops] trait JsonImplicits extends ImplicitTupleFormats with JsValueImplicits {
 
   implicit def formatOps(format: Format.type): FormatOps.type = FormatOps
 
@@ -23,7 +21,7 @@ private[ops] trait JsonImplicits extends ImplicitTupleFormats {
       Reads[Map[K, V]] { _ =>
         val initResult: JsResult[Map[K, V]] = JsSuccess(Map())
         a.map { case (k, v) => (readsK.read(k), v) }.foldLeft(initResult) {
-          case (JsSuccess(acc, _), (JsSuccess(k, _), v)) => JsSuccess(acc + (k -> v))
+          case (JsSuccess(acc, _), (JsSuccess(k, _), v)) => JsSuccess(acc.updated(k, v))
           case (JsSuccess(_, _), (firstError: JsError, _)) => firstError
           case (accErrors: JsError, (errors: JsError, _)) => accErrors ++ errors
           case (accErrors: JsError, _) => accErrors

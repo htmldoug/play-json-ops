@@ -15,8 +15,7 @@ object TupleFormats extends ImplicitTupleFormats
  *   Json.parse("""[1, "2", true]""").as[(Int, String, Boolean)]  // will work
  * }}}
  */
-object ImplicitTupleFormats extends ImplicitTupleFormats
-private[ops] trait ImplicitTupleFormats {
+trait ImplicitTupleFormats {
 
   implicit def tuple2Reads[A: Reads, B: Reads]: Reads[(A, B)] =
     new Reads[(A, B)] {

@@ -22,7 +22,7 @@ class FormatOpsSpec extends WordSpec {
 
 }
 
-object PureExample {
+object PureExample extends JsonImplicits {
 
   val alwaysWritenAs: JsValue = JsNull
 

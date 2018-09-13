@@ -146,15 +146,11 @@ trait JsValueGenerators {
   // Shrinks for better error output
 
   implicit val shrinkJsArray: Shrink[JsArray] = Shrink {
-    arr =>
-      val stream: Stream[JsArray] = shrink(arr.value) map JsArray
-      stream
+    arr => shrink(arr.value) map JsArray
   }
 
   implicit val shrinkJsObject: Shrink[JsObject] = Shrink {
-    obj =>
-      val stream: Stream[JsObject] = shrink(obj.value) map { fields => JsObject(fields.toSeq) }
-      stream
+    obj => shrink(obj.value) map { fields => JsObject(fields.toSeq) }
   }
 
   implicit val shrinkJsValue: Shrink[JsValue] = Shrink {
@@ -162,6 +158,6 @@ trait JsValueGenerators {
     case obj: JsObject  => shrink(obj)
     case JsString(str)  => shrink(str) map JsString
     case JsNumber(num)  => shrink(num) map JsNumber
-    case JsNull | JsUndefined() | JsBoolean(_) => Stream.empty[JsValue]
+    case other => shrink(other)
   }
 }

@@ -22,7 +22,7 @@ class OFormatOpsSpec extends WordSpec {
 
 }
 
-object PureObjectExample {
+object PureObjectExample extends JsonImplicits {
 
   val alwaysWritenAs: JsObject = Json.obj("value" -> "example")
 

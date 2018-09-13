@@ -92,7 +92,7 @@ trait SerializationTests[T] extends GenericTestSuite {
   }
 
   // Register the actual test
-  addTest(s"Format[$className] should read what it writes as JsValue in") {
+  addTest(s"Format[$className] should read the JsValue that it writes") {
     val decomposed = examples.par map serialize
     val reconstructed = decomposed map { written =>
       val pretty = prettyPrint(written)
@@ -124,7 +124,7 @@ trait PlaySerializationTests[T] extends SerializationTests[T] {
 
   override protected def deserialize(serialized: Serialized): Either[String, T] = serialized.validate[T] match {
     case JsSuccess(model, _) => Right(model)
-    case JsError(errors)     => Left(prettyPrint(JsError.toFlatJson(errors)))
+    case JsError(errors)     => Left(prettyPrint(JsError.toJson(errors)))
   }
 
   override protected def prettyPrint(serialized: Serialized): String = Json.prettyPrint(serialized)
@@ -145,7 +145,8 @@ abstract class PlayJsonFormatTests[T](
 
   /* sadly alternate constructors do not work with self-types properly in Scala 2.10,
    * and an implicit argument list would have the same signature after type erasure
-   * so it is up to the subclasses to provide a nicer interface.
+   * so it is up to the subclasses to provide a more user-friendly constructor that
+   * combines the class with the self-type requirement.
    **/
 
 }

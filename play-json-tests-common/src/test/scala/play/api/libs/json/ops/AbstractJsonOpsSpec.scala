@@ -174,8 +174,7 @@ case class SpecificFieldA(value: String) extends SingleField {
 }
 object SpecificFieldA extends JsonImplicits {
   final val key = "A"
-  implicit val format: OFormat[SpecificFieldA] = Json.formatWithTypeKeyOf[Generic]
-    .addedTo(Json.format[SpecificFieldA].asInstanceOf[OFormat[SpecificFieldA]])
+  implicit val format: OFormat[SpecificFieldA] = Json.formatWithTypeKeyOf[Generic].addedTo(Json.format[SpecificFieldA])
 }
 
 case class SpecificFieldB(value: String) extends SingleField {
@@ -184,18 +183,17 @@ case class SpecificFieldB(value: String) extends SingleField {
 }
 object SpecificFieldB extends JsonImplicits {
   final val key = "B"
-  implicit val format: OFormat[SpecificFieldB] = Json.formatWithTypeKeyOf[Generic]
-    .addedTo(Json.format[SpecificFieldB].asInstanceOf[OFormat[SpecificFieldB]])
+  implicit val format: OFormat[SpecificFieldB] = Json.formatWithTypeKeyOf[Generic].addedTo(Json.format[SpecificFieldB])
 }
 
-case object SpecificObjectC extends SingleField {
+case object SpecificObjectC extends SingleField with JsonImplicits {
   override final val key: String = "C"
   override def value: String = "invisible constant C"
   override def hidesValueFromJson: Boolean = true
   implicit val format: OFormat[this.type] = Json.formatWithTypeKeyOf[Generic].pure(SpecificObjectC)
 }
 
-case object SpecificObjectD extends SingleField {
+case object SpecificObjectD extends SingleField with JsonImplicits {
   override final val key: String = "D"
   def value: String = "visible constant D"
   override def hidesValueFromJson: Boolean = false
@@ -205,13 +203,13 @@ case object SpecificObjectD extends SingleField {
 
 sealed trait ComplexKey extends Generic {
   def id: String
-  override def key = ComplexKey.key
+  final override def key: String = ComplexKey.key
 }
-object ComplexKey {
+object ComplexKey extends JsonImplicits {
 
   final val key = "Complex"
 
-  implicit val extractor: TypeKeyExtractor[ComplexKey] = Json.extractTypeKey[ComplexKey].usingKeyObject(
+  implicit val extractor: TypeKeyExtractor[ComplexKey] = AbstractJsonOps.extractTypeKey[ComplexKey].usingKeyObject(
     (__ \ "otherBoolean") -> Format.of[Boolean],
     (__ \ "otherString")  -> Format.of[String]
   ) {
@@ -220,19 +218,19 @@ object ComplexKey {
   }
 
   implicit val format: OFormat[ComplexKey] = Json.formatAbstract[ComplexKey] {
-    case otherString: String   => OFormat.of[ComplexStringKey]
-    case otherBoolean: Boolean => OFormat.of[ComplexBooleanKey]
+    case _: String  => OFormat.of[ComplexStringKey]
+    case _: Boolean => OFormat.of[ComplexBooleanKey]
   }
 }
 
 case class ComplexStringKey(id: String, value: String, otherString: String) extends ComplexKey
-object ComplexStringKey {
+object ComplexStringKey extends JsonImplicits {
   implicit val format: OFormat[ComplexStringKey] = Json.formatWithTypeKeyOf[ComplexKey]
-    .addedTo(Json.format[ComplexStringKey].asInstanceOf[OFormat[ComplexStringKey]])
+    .addedTo(Json.format[ComplexStringKey])
 }
 
 case class ComplexBooleanKey(id: String, value: String, otherBoolean: Boolean) extends ComplexKey
-object ComplexBooleanKey {
+object ComplexBooleanKey extends JsonImplicits {
   implicit val format: OFormat[ComplexBooleanKey] = Json.formatWithTypeKeyOf[ComplexKey]
-    .addedTo(Json.format[ComplexBooleanKey].asInstanceOf[OFormat[ComplexBooleanKey]])
+    .addedTo(Json.format[ComplexBooleanKey])
 }
