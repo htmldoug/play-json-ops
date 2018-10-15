@@ -11,8 +11,7 @@ import scala.util.Random
 
 class JsonTransformSpec extends FlatSpec
 with CompatibilityImplicits
-with JsValueGenerators
-with JsonImplicits {
+with JsValueGenerators {
 
   @tailrec private def verifyAllRedacted(all: Seq[(JsPath, JsValue)]): Unit = {
     val invalid = all collect {

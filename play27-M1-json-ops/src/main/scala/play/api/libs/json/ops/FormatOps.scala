@@ -2,6 +2,8 @@ package play.api.libs.json.ops
 
 import play.api.libs.json._
 
+import scala.collection.IterableFactory
+import scala.language.higherKinds
 import scala.reflect._
 
 object FormatOps {
@@ -29,15 +31,15 @@ object FormatOps {
    * Useful for avoiding compile-time errors when serializing empty collections,
    * where the compiler cannot infer the item type of the collection.
    *
-   * @param empty the value when empty
-   * @tparam Empty the type of value when empty (ie. None.type, Nil.type, Seq[Nothing], etc)
+   * @param builder the collection builder (ie. Seq, List, etc)
+   * @tparam C the type of collection (ie. Seq, List, etc -- usually just inferred from builder)
    * @return a Format[Empty] that will always write an empty JsArray() and read the given empty value.
    */
-  def empty[Empty <: Iterable[Nothing]](empty: Empty): Format[Empty] = {
+  def empty[C[_]](builder: IterableFactory[C]): Format[C[Nothing]] = {
     Format(
       Reads {
         case JsArray(Seq()) =>
-          JsSuccess(empty)
+          JsSuccess(builder.empty)
         case unexpected =>
           JsError(s"Unexpected value for Nil reader: $unexpected")
       },

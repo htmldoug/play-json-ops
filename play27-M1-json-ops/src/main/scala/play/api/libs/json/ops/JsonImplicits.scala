@@ -4,7 +4,9 @@ import play.api.libs.json._
 
 import scala.language.implicitConversions
 
-private[ops] trait JsonImplicits extends ImplicitTupleFormats with JsValueImplicits {
+private[ops] class JsonImplicits extends ImplicitTupleFormats {
+
+  implicit def jsValueOps(json: JsValue): JsValueOps = new JsValueOps(json)
 
   implicit def formatOps(format: Format.type): FormatOps.type = FormatOps
 

@@ -7,7 +7,6 @@ import play.api.libs.json._
 
 class AbstractJsonOpsSpec extends WordSpec
   with GeneratorDrivenPropertyChecks
-  with JsonImplicits
   with ExampleGenerators
   with Matchers {
 
@@ -186,14 +185,14 @@ object SpecificFieldB extends JsonImplicits {
   implicit val format: OFormat[SpecificFieldB] = Json.formatWithTypeKeyOf[Generic].addedTo(Json.format[SpecificFieldB])
 }
 
-case object SpecificObjectC extends SingleField with JsonImplicits {
+case object SpecificObjectC extends SingleField {
   override final val key: String = "C"
   override def value: String = "invisible constant C"
   override def hidesValueFromJson: Boolean = true
   implicit val format: OFormat[this.type] = Json.formatWithTypeKeyOf[Generic].pure(SpecificObjectC)
 }
 
-case object SpecificObjectD extends SingleField with JsonImplicits {
+case object SpecificObjectD extends SingleField {
   override final val key: String = "D"
   def value: String = "visible constant D"
   override def hidesValueFromJson: Boolean = false

@@ -1,6 +1,7 @@
 package play.api.libs.json.ops
 
 import play.api.libs.json._
+import play.api.libs.json.ops.ImplicitTupleFormats._
 
 import scala.concurrent.duration._
 import scala.concurrent.duration.ops._
@@ -67,7 +68,17 @@ trait StringDurationFormat extends ImplicitDurationReads with ImplicitDurationWr
  *
  * For example: Duration("1 second") => [1, "SECONDS"]
  */
-trait ArrayDurationFormat extends ImplicitDurationReads with ImplicitDurationWrites with ImplicitTupleFormats {
+trait ArrayDurationFormat extends ImplicitDurationReads with ImplicitDurationWrites {
+
+  override implicit val finiteDurationReads: Reads[FiniteDuration] = new Reads[FiniteDuration] {
+    override def reads(json: JsValue): JsResult[FiniteDuration] = json.validate[(Long, String)] flatMap {
+      case (x, unit) =>
+        try JsSuccess(Duration(x, unit.toLowerCase))
+        catch {
+          case NonFatal(ex: NumberFormatException) => JsError(ex.getMessage)
+        }
+    }
+  }
 
   override implicit val durationReads: Reads[Duration] = new Reads[Duration] {
     override def reads(json: JsValue): JsResult[Duration] = {
@@ -80,16 +91,6 @@ trait ArrayDurationFormat extends ImplicitDurationReads with ImplicitDurationWri
         case None =>
           finiteDurationReads reads json
       }
-    }
-  }
-
-  override implicit val finiteDurationReads: Reads[FiniteDuration] = new Reads[FiniteDuration] {
-    override def reads(json: JsValue): JsResult[FiniteDuration] = json.validate[(Long, String)] flatMap {
-      case (x, unit) =>
-        try JsSuccess(Duration(x, unit.toLowerCase))
-        catch {
-          case NonFatal(ex: NumberFormatException) => JsError(ex.getMessage)
-        }
     }
   }
 
