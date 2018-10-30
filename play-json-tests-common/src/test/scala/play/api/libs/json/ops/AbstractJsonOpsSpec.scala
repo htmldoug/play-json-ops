@@ -147,7 +147,7 @@ sealed trait Generic {
   def value: String
 }
 
-object Generic extends JsonImplicits {
+object Generic {
 
   val keyFieldName = "key"
 
@@ -171,7 +171,7 @@ case class SpecificFieldA(value: String) extends SingleField {
   override def key: String = SpecificFieldA.key
   override def hidesValueFromJson: Boolean = false
 }
-object SpecificFieldA extends JsonImplicits {
+object SpecificFieldA {
   final val key = "A"
   implicit val format: OFormat[SpecificFieldA] = Json.formatWithTypeKeyOf[Generic].addedTo(Json.format[SpecificFieldA])
 }
@@ -180,7 +180,7 @@ case class SpecificFieldB(value: String) extends SingleField {
   override def key: String = SpecificFieldB.key
   override def hidesValueFromJson: Boolean = false
 }
-object SpecificFieldB extends JsonImplicits {
+object SpecificFieldB {
   final val key = "B"
   implicit val format: OFormat[SpecificFieldB] = Json.formatWithTypeKeyOf[Generic].addedTo(Json.format[SpecificFieldB])
 }
@@ -204,7 +204,7 @@ sealed trait ComplexKey extends Generic {
   def id: String
   final override def key: String = ComplexKey.key
 }
-object ComplexKey extends JsonImplicits {
+object ComplexKey {
 
   final val key = "Complex"
 
@@ -223,13 +223,13 @@ object ComplexKey extends JsonImplicits {
 }
 
 case class ComplexStringKey(id: String, value: String, otherString: String) extends ComplexKey
-object ComplexStringKey extends JsonImplicits {
+object ComplexStringKey {
   implicit val format: OFormat[ComplexStringKey] = Json.formatWithTypeKeyOf[ComplexKey]
     .addedTo(Json.format[ComplexStringKey])
 }
 
 case class ComplexBooleanKey(id: String, value: String, otherBoolean: Boolean) extends ComplexKey
-object ComplexBooleanKey extends JsonImplicits {
+object ComplexBooleanKey {
   implicit val format: OFormat[ComplexBooleanKey] = Json.formatWithTypeKeyOf[ComplexKey]
     .addedTo(Json.format[ComplexBooleanKey])
 }

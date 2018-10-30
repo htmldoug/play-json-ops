@@ -16,7 +16,7 @@ import scala.language.implicitConversions
   * }}}
   */
 private[ops] object ImplicitTupleFormats extends ImplicitTupleFormats
-private[ops] class ImplicitTupleFormats {
+private[ops] class ImplicitTupleFormats private[ops] {
 
   implicit def tuple2Reads[A: Reads, B: Reads]: Reads[(A, B)] =
     new Reads[(A, B)] {

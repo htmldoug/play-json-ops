@@ -9,22 +9,39 @@ class FormatOpsSpec extends WordSpec {
 
     "read the expected object" in {
       assertResult(PureObjectExample) {
-        JsBoolean(false).as[PureObjectExample.type] // any value will read PureExample
+        PureObjectExample.format.reads(JsBoolean(false)).get // any value will read PureExample
       }
     }
 
     "write the expected json" in {
       assertResult(PureObjectExample.alwaysWritenAs) {
-        Json.toJson(PureObjectExample)
+        PureObjectExample.format.writes(PureObjectExample)
+      }
+    }
+  }
+
+  "OFormat.pure" should {
+
+    "read the expected object" in {
+      assertResult(PureObjectExample) {
+        PureObjectExample.oformat.reads(JsBoolean(false)).get // any value will read PureExample
+      }
+    }
+
+    "write the expected json" in {
+      assertResult(PureObjectExample.alwaysWritenAsObject) {
+        PureObjectExample.oformat.writes(PureObjectExample)
       }
     }
   }
 
 }
 
-object PureExample extends JsonImplicits {
+object PureObjectExample {
 
-  val alwaysWritenAs: JsValue = JsNull
+  val alwaysWritenAs: JsValue = JsString("pure")
+  val alwaysWritenAsObject: JsObject = Json.obj("value" -> alwaysWritenAs)
 
-  implicit val format: Format[PureObjectExample.type] = Format.pure(PureObjectExample, alwaysWritenAs)
+  val format: Format[PureObjectExample.type] = Format.pure(this, alwaysWritenAs)
+  val oformat: OFormat[PureObjectExample.type] = OFormat.pure(this, alwaysWritenAsObject)
 }
