@@ -6,7 +6,7 @@ ThisBuild / organizationName := "Rally Health"
 
 val Scala_2_11 = "2.11.12"
 val Scala_2_12 = "2.12.6"
-val Scala_2_13 = "2.13.0-M3"
+val Scala_2_13 = "2.13.0-M5"
 
 ThisBuild / scalaVersion := Scala_2_11
 
