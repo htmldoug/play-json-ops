@@ -6,7 +6,7 @@ ThisBuild / organizationName := "Rally Health"
 
 val Scala_2_11 = "2.11.12"
 val Scala_2_12 = "2.12.6"
-val Scala_2_13 = "2.13.0-M4"
+val Scala_2_13 = "2.13.0-M3"
 
 ThisBuild / scalaVersion := Scala_2_11
 
@@ -52,7 +52,7 @@ def commonProject(id: String): Project = {
 def playSuffix(includePlayVersion: String): String = includePlayVersion match {
   case Play_2_5 => "25"
   case Play_2_6 => "26"
-  case Play_2_7 => "27-m1"
+  case Play_2_7 => "27-m3"
 }
 
 def scalaVersions(includePlayVersion: String): Seq[String] = includePlayVersion match {

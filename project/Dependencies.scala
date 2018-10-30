@@ -4,7 +4,7 @@ object Dependencies {
 
   val Play_2_5 = "2.5.18"
   val Play_2_6 = "2.6.19"
-  val Play_2_7 = "2.7.0-M1"
+  val Play_2_7 = "2.7.0-M4"
 
   val ScalaCheck_1_12 = "1.12.5"
   val ScalaCheck_1_13 = "1.13.5"
@@ -14,7 +14,7 @@ object Dependencies {
   private val ScalaCheckOpsVersion = "2.2.0"
   private val ScalaTest_2 = "2.2.6"
   private val ScalaTest_3 = "3.0.5"
-  private val ScalaTest_3_M4 = "3.0.6-SNAP2"
+  private val ScalaTest_3_M4 = "3.0.5-M1"
 
   def playJson(playVersion: String): ModuleID = {
     val playJsonVersion = playVersion match {
